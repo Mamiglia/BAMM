@@ -124,3 +124,8 @@ python eval_t2m_trans_res.py \
     --ext LOG_NAME
 ```
 </details>
+
+
+## License
+This code is distributed under an [LICENSE-CC-BY-NC-ND-4.0](LICENSE-CC-BY-NC-ND-4.0.md).
+Note that our code depends on other libraries, including [MoMask](https://github.com/EricGuo5513/momask-codes), [MMM](https://github.com/exitudio/MMM/), [CLIP](https://github.com/openai/CLIP), [SMPL-X](https://github.com/vchoutas/smplx), [T2M-GPT](https://github.com/Mael-zys/T2M-GPT), and [HumanML3D](https://github.com/EricGuo5513/HumanML3D) that each have their own respective licenses that must also be followed.
