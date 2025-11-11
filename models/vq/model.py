@@ -1,10 +1,10 @@
 import random
 
 import torch.nn as nn
-from models.vq.encdec import Encoder, Decoder
-from models.vq.residual_vq import ResidualVQ
+from .encdec import Encoder, Decoder
+from .residual_vq import ResidualVQ
 import torch
-from utils.humanml_utils import HML_UPPER_BODY_MASK, HML_LOWER_BODY_MASK, UPPER_JOINT_Y_MASK
+from src.bamm.utils.humanml_utils import HML_UPPER_BODY_MASK, HML_LOWER_BODY_MASK, UPPER_JOINT_Y_MASK
     
 class RVQVAE(nn.Module):
     def __init__(self,

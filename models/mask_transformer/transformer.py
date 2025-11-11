@@ -11,9 +11,9 @@ from tqdm.auto import tqdm
 from typing import Callable, Optional, List, Dict
 from copy import deepcopy
 from functools import partial
-from models.mask_transformer.tools import *
+from .tools import *
 from torch.distributions.categorical import Categorical
-from models.mask_transformer.transformer_block import TransformerEncoderLayer, TransformerDecoderLayer, TransformerEncoder
+from .transformer_block import TransformerEncoderLayer, TransformerDecoderLayer, TransformerEncoder
 
 class InputProcess(nn.Module):
     def __init__(self, input_feats, latent_dim):
@@ -95,9 +95,11 @@ class MaskTransformer(nn.Module):
         self.clip_dim = clip_dim
         self.dropout = dropout
         self.opt = opt
-
         self.cond_mode = cond_mode
         self.cond_drop_prob = cond_drop_prob
+
+        if not hasattr(self.opt, 'trans'):
+            self.opt.trans = 'official'
 
         if self.cond_mode == 'action':
             assert 'num_actions' in kargs
