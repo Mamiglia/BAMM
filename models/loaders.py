@@ -52,17 +52,17 @@ def load_trans_model(model_opt, ckpt="net_best_fid.tar", device='cuda', clip_ver
     model_key = 't2m_transformer' if 't2m_transformer' in ckpt else 'trans'
     print(ckpt.keys())
     
-    # Pop the mismatched layers
-    ckpt[model_key].pop('output_process.poseFinal.weight')
-    ckpt[model_key].pop('output_process.poseFinal.bias')
-    ckpt[model_key].pop('token_emb.weight')
+    # # Pop the mismatched layers
+    # ckpt[model_key].pop('output_process.poseFinal.weight')
+    # ckpt[model_key].pop('output_process.poseFinal.bias')
+    # ckpt[model_key].pop('token_emb.weight')
     
     missing_keys, unexpected_keys = t2m_transformer.load_state_dict(ckpt[model_key], strict=False)
     if len(unexpected_keys) > 0:
         print('Unexpected keys:', unexpected_keys)
     
     # Filter out the keys that are expected to be missing due to architecture differences
-    expected_missing_keys = ['output_process.poseFinal.weight', 'output_process.poseFinal.bias', 'token_emb.weight']
+    expected_missing_keys = []#['output_process.poseFinal.weight', 'output_process.poseFinal.bias', 'token_emb.weight']
     missing_keys = [k for k in missing_keys if k not in expected_missing_keys]
 
     assert all([k.startswith('clip_model.') for k in missing_keys])

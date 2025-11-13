@@ -37,7 +37,7 @@ def load_vq_model(vq_opt):
                 vq_opt.dilation_growth_rate,
                 vq_opt.vq_act,
                 vq_opt.vq_norm)
-    ckpt = torch.load(pjoin(vq_opt.checkpoints_dir, vq_opt.dataset_name, vq_opt.name, 'model', 'net_best_fid.tar'),
+    ckpt = torch.load(pjoin('../..',vq_opt.checkpoints_dir, vq_opt.dataset_name, vq_opt.name, 'model', 'base.tar'),
                             map_location='cpu')
     model_key = 'vq_model' if 'vq_model' in ckpt else 'net'
     vq_model.load_state_dict(ckpt[model_key])
@@ -56,7 +56,7 @@ def load_trans_model(model_opt, opt, which_model):
                                       cond_drop_prob=model_opt.cond_drop_prob,
                                       clip_version=clip_version,
                                       opt=model_opt)
-    ckpt = torch.load(pjoin(model_opt.checkpoints_dir, model_opt.dataset_name, model_opt.name, 'model', which_model),
+    ckpt = torch.load(pjoin('../..',model_opt.checkpoints_dir, model_opt.dataset_name, model_opt.name, 'model', which_model),
                       map_location='cpu')
     model_key = 't2m_transformer' if 't2m_transformer' in ckpt else 'trans'
     # print(ckpt.keys())
@@ -84,7 +84,7 @@ def load_res_model(res_opt):
                                             clip_version=clip_version,
                                             opt=res_opt)
 
-    ckpt = torch.load(pjoin(res_opt.checkpoints_dir, res_opt.dataset_name, res_opt.name, 'model', 'net_best_fid.tar'),
+    ckpt = torch.load(pjoin('../..',res_opt.checkpoints_dir, res_opt.dataset_name, res_opt.name, 'model', 'base.tar'),
                       map_location=opt.device)
     missing_keys, unexpected_keys = res_transformer.load_state_dict(ckpt['res_transformer'], strict=False)
     assert len(unexpected_keys) == 0
@@ -94,7 +94,7 @@ def load_res_model(res_opt):
 
 def load_len_estimator(opt):
     model = LengthEstimator(512, 50)
-    ckpt = torch.load(pjoin('checkpoints', opt.dataset_name, 'length_estimator', 'model', 'finest.tar'),
+    ckpt = torch.load(pjoin('../..','checkpoints', opt.dataset_name, 'length_estimator', 'model', 'finest.tar'),
                       map_location=opt.device)
     model.load_state_dict(ckpt['estimator'])
     print(f'Loading Length Estimator from epoch {ckpt["epoch"]}!')
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     #######################
     ######Loading RVQ######
     #######################
-    vq_opt_path = pjoin('./log/vq', opt.dataset_name, model_opt.vq_name, 'opt.txt')
+    vq_opt_path = pjoin(opt.checkpoints_dir, opt.dataset_name, model_opt.vq_name, 'opt.txt')
     vq_opt = get_opt(vq_opt_path, device=opt.device)
     vq_model, vq_opt = load_vq_model(vq_opt)
 
@@ -138,7 +138,7 @@ if __name__ == '__main__':
     #################################
     ######Loading R-Transformer######
     #################################
-    res_opt_path = pjoin('checkpoints', opt.dataset_name, opt.res_name, 'opt.txt')
+    res_opt_path = pjoin(opt.checkpoints_dir, opt.dataset_name, opt.res_name, 'opt.txt')
     res_opt = get_opt(res_opt_path, device=opt.device)
     res_model = load_res_model(res_opt)
 
@@ -167,8 +167,8 @@ if __name__ == '__main__':
     ##### ---- Dataloader ---- #####
     opt.nb_joints = 21 if opt.dataset_name == 'kit' else 22
 
-    mean = np.load(pjoin('checkpoints', opt.dataset_name, model_opt.vq_name, 'meta', 'mean.npy'))
-    std = np.load(pjoin('checkpoints', opt.dataset_name, model_opt.vq_name, 'meta', 'std.npy'))
+    mean = np.load(pjoin(opt.checkpoints_dir, opt.dataset_name, model_opt.vq_name, 'meta', 'mean.npy'))
+    std = np.load(pjoin(opt.checkpoints_dir, opt.dataset_name, model_opt.vq_name, 'meta', 'std.npy'))
     def inv_transform(data):
         return data * std + mean
 
