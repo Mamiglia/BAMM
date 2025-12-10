@@ -439,7 +439,7 @@ class MaskTransformer(nn.Module):
 
         # scores = torch.cat([scores, torch.ones(scores.shape[0], 1, device=ids.device)*1e5], dim=1)
         # scores = scores.masked_fill(~is_mask, 1e5)
-        return ids, pred_len
+        return ids
     
     def gen_one(self, idx, cond_vector, seq_len, cond_idx, cond_scale, pred_len=True):
         probs_all = []

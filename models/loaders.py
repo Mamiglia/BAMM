@@ -25,7 +25,7 @@ def load_vq_model(vq_opt, ckpt="net_best_fid.tar", dim_pose=251, device='cuda'):
     
     ckpt = torch.load(ckpt_path,
                             map_location=device)
-    print(f'Loaded VQ Model {ckpt_path}!')
+    print(f'Loading VQ Model {ckpt_path}!')
     model_key = 'vq_model' if 'vq_model' in ckpt else 'net'
     vq_model.load_state_dict(ckpt[model_key])
     return vq_model, vq_opt
@@ -52,21 +52,21 @@ def load_trans_model(model_opt, ckpt="net_best_fid.tar", device='cuda', clip_ver
     model_key = 't2m_transformer' if 't2m_transformer' in ckpt else 'trans'
     print(ckpt.keys())
     
-    # # Pop the mismatched layers
-    # ckpt[model_key].pop('output_process.poseFinal.weight')
-    # ckpt[model_key].pop('output_process.poseFinal.bias')
-    # ckpt[model_key].pop('token_emb.weight')
+    # Pop the mismatched layers
+    ckpt[model_key].pop('output_process.poseFinal.weight')
+    ckpt[model_key].pop('output_process.poseFinal.bias')
+    ckpt[model_key].pop('token_emb.weight')
     
     missing_keys, unexpected_keys = t2m_transformer.load_state_dict(ckpt[model_key], strict=False)
     if len(unexpected_keys) > 0:
         print('Unexpected keys:', unexpected_keys)
     
     # Filter out the keys that are expected to be missing due to architecture differences
-    expected_missing_keys = []#['output_process.poseFinal.weight', 'output_process.poseFinal.bias', 'token_emb.weight']
+    expected_missing_keys = ['output_process.poseFinal.weight', 'output_process.poseFinal.bias', 'token_emb.weight']
     missing_keys = [k for k in missing_keys if k not in expected_missing_keys]
 
     assert all([k.startswith('clip_model.') for k in missing_keys])
-    print(f'Loaded Mask Transformer {ckpt_path}!')
+    print(f'Loading Mask Transformer {ckpt_path}!')
     return t2m_transformer
 
 def load_res_model(res_opt, ckpt, vq_opt, clip_version='ViT-B/32', device='cuda'):
@@ -100,7 +100,7 @@ def load_res_model(res_opt, ckpt, vq_opt, clip_version='ViT-B/32', device='cuda'
     if len(unexpected_keys) > 0:
         print('Unexpected keys:', unexpected_keys)
     assert all([k.startswith('clip_model.') for k in missing_keys])
-    print(f'Loaded Residual Transformer {ckpt_path}!')
+    print(f'Loading Residual Transformer {ckpt_path}!')
     return res_transformer
 
 def load_len_estimator(opt):
@@ -108,5 +108,5 @@ def load_len_estimator(opt):
     ckpt = torch.load(Path(opt.checkpoints_dir, opt.dataset_name, 'length_estimator', 'model', 'finest.tar'),
                       map_location=opt.device)
     model.load_state_dict(ckpt['estimator'])
-    print(f'Loaded Length Estimator from {ckpt["epoch"]}!')
+    print(f'Loading Length Estimator from {ckpt["epoch"]}!')
     return model
